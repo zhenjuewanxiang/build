@@ -17,7 +17,7 @@ rm -rf $SYSTEM_DIR/mnt/cfg/secure.img
 
 if [ "$OSDRV_BUILD_IN" = "y" ]
 then
-find $SYSTEM_DIR/mnt/system/ko/ ! -name loaddatako.sh -type f -exec rm -rf {} \;
+find $SYSTEM_DIR/mnt/system/ko/ ! -name loaddatako.sh ! -name loadwifi.sh ! -name '8189fs.ko' ! -name 'cfg80211.ko' -type f -exec rm -rf {} \;
 fi
 
 if [ $BUILD_FOR_DEBUG != "y" ]

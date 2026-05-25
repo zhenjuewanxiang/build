@@ -4,7 +4,61 @@
 #include "cv180x_asic_spinor.dtsi"
 #include "cv180x_default_memmap.dtsi"
 
-/ {
-
+&spi1 {
+  status = "okay";
+  num-cs = <1>;
+  /*
+   * IMU SPI1 on PAD_ETH_TXP/RXP (reuse internal EPHY pads).
+   * Applied by spi-dw-mmio driver on probe (cvitek,mmio-init).
+   * Tuple: <phys_addr mask value>; addr 0xfffffffe = delay, value = us.
+   */
+  cvitek,mmio-init = <
+    /* Release internal EPHY, mux pads to SPI1 */
+    0x03009804 0xffffffff 0x1
+    0x03009808 0xffffffff 0x1
+    0x03009800 0xffffffff 0x0905
+    0xfffffffe 0xffffffff 20
+    0x0300907c 0xffffffff 0x0500
+    0x03009078 0xffffffff 0x0f00
+    0x03009074 0xffffffff 0x606
+    0x03009070 0xffffffff 0x606
+    /* PAD_ETH_TXP/MOSI, TXM/MISO, RXP/SCK, RXM/CS -> SPI1 func 6 */
+    0x030010c0 0xffffffff 0x6
+    0x030010c4 0xffffffff 0x6
+    0x030010c8 0xffffffff 0x6
+    0x030010cc 0xffffffff 0x6
+  >;
+  spidev@0 {
+    compatible = "rohm,dh2228fv";   /* spidev 固定用这个 compatible */
+    reg = <0>;                      /* CS0 */
+    spi-max-frequency = <10000000>; /* 按 IMU 手册改，先别太高 */
+  };
 };
 
+&ethernet0 {
+    status = "disabled";
+};
+
+/ {
+    wifisd: wifi-sd@4320000 {
+        compatible = "cvitek,cv180x-sdio";
+        bus-width = <4>;
+        reg = <0x0 0x4320000 0x0 0x1000>;
+        reg-names = "core_mem";
+        src-frequency = <375000000>;
+        min-frequency = <400000>;
+        max-frequency = <50000000>;
+        64_addressing;
+        reset_tx_rx_phy;
+        non-removable;
+        pll_index = <0x7>;
+        pll_reg = <0x300207C>;
+        clocks = <&clk CV180X_CLK_SD1>;
+        clock-names = "clk_wifisd";
+        no-mmc;
+        no-sd;
+        interrupts = <38 IRQ_TYPE_LEVEL_HIGH>;
+        interrupt-parent = <&plic0>;
+        status = "okay";
+    };
+};

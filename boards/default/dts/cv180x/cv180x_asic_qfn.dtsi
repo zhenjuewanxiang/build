@@ -8,7 +8,7 @@
 };
 
 &dac{
-	mute-gpio-r = <&porte 2 GPIO_ACTIVE_LOW>;
+	/* PORTE2 与 WiFi 上电共用，勿作 DAC mute */
 };
 #endif
 
@@ -108,6 +108,8 @@
 	/* gpio port */
 	scl-gpios = <&porte 1 GPIO_ACTIVE_HIGH>;
 	sda-gpios = <&porte 2 GPIO_ACTIVE_HIGH>;
+	/* PORTE2 为 WiFi 上电，不可作 I2C5 SDA */
+	status = "disabled";
 };
 
 / {
