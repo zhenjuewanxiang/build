@@ -103,7 +103,7 @@ ls -l install/soc_cv180zb_wevb_0008a_spinor/rawimages/boot.spinor       install/
 OTA 包只包含非活动槽位需要写入的系统镜像：`boot.spinor`、`rootfs.spinor` 和 `manifest.env`。
 
 ```sh
-build/tools/common/ota_tool/make_spinor_ab_ota.sh   /tmp/ota-1.0.1   cv180zb_wevb_0008a_spinor   1.0.1   install/soc_cv180zb_wevb_0008a_spinor/rawimages/boot.spinor   install/soc_cv180zb_wevb_0008a_spinor/rawimages/rootfs.spinor
+build/tools/common/ota_tool/make_spinor_ab_ota.sh   tmp/ota-1.0.1   cv180zb_wevb_0008a_spinor   1.0.1   install/soc_cv180zb_wevb_0008a_spinor/rawimages/boot.spinor   install/soc_cv180zb_wevb_0008a_spinor/rawimages/rootfs.spinor
 ```
 
 生成目录结构：

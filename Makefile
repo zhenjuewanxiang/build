@@ -661,6 +661,7 @@ ifeq ($(CONFIG_SUP_LARGE_PART_SIZE),y)
 	$(call raw2cimg_lps ,rootfs.$(STORAGE_TYPE))
 else
 ifeq ($(CONFIG_DOUBLESDK),y)
+	$(call raw2cimg ,rootfs.$(STORAGE_TYPE))
 	${Q}cp $(OUTPUT_DIR)/rawimages/rootfs.$(STORAGE_TYPE) $(OUTPUT_DIR)/rawimages/rootfs_v420.$(STORAGE_TYPE)
 	$(call raw2cimg ,rootfs_v420.$(STORAGE_TYPE))
 else

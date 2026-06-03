@@ -246,6 +246,7 @@ function copy_tools
     if [ "$ENABLE_BOOTLOGO" -eq 1 ] && [ "$SUP_LARGE_PART_SIZE" = "y" ]; then
       python3 "$IMGTOOL_PATH"/raw2cimg_lps.py "$BOOTLOGO_PATH" "$OUTPUT_DIR" "$FLASH_PARTITION_XML"
     fi
+    command rm -f "$OUTPUT_DIR"/partition*.xml
     command cp --remove-destination "$FLASH_PARTITION_XML" "$OUTPUT_DIR"/
   fi
 )}
