@@ -12,7 +12,7 @@
 | BOOT_BAK | 3072KB | B 槽 boot.itb |
 | ROOTFS | 2304KB | A 槽 rootfs.squashfs |
 | ROOTFS_BAK | 2304KB | B 槽 rootfs.squashfs |
-| DATA | 2048KB | 共享数据区，当前放置 `video_sei_enc` 和运行库 |
+| DATA | 1664KB | 共享数据区，当前放置 `video_sei_enc` 和运行库 |
 | ENV/ENV_BAK | 64KB + 64KB | U-Boot 环境变量，保存 OTA 状态 |
 | OTA_META/PARAM/PARAM_BAK/MISC | 各 64KB | 预留/参数分区 |
 
@@ -50,7 +50,7 @@ fw_setenv ota_try 0
 | --- | ---: |
 | `boot.spinor` | 3072KB |
 | `rootfs.spinor` | 2304KB |
-| `data.spinor` | 2048KB |
+| `data.spinor` | 1664KB |
 
 已做的瘦身策略：
 
@@ -65,7 +65,7 @@ fw_setenv ota_try 0
 ```text
 boot.spinor raw    2917576 bytes
 rootfs.spinor raw  1957888 bytes
-data.spinor raw    2097152 bytes
+data.spinor raw    <= 1703936 bytes
 ```
 
 ## 4. 构建
