@@ -153,6 +153,9 @@ function pack_data
   export CHIP_FOLDER_PATH SDK_VER_FOLDER_PATH CUST_FOLDER_PATH
   mkdir -p "$OUTPUT_DIR"/data
   pushd "$OUTPUT_DIR"/data;echo "If you can dream it, you can do it." > sample;popd
+  if [ -x "$BUILD_PATH"/boards/"${CHIP_ARCH,,}"/"$PROJECT_FULLNAME"/rootfs_script/clean_data.sh ]; then
+    "$BUILD_PATH"/boards/"${CHIP_ARCH,,}"/"$PROJECT_FULLNAME"/rootfs_script/clean_data.sh "$OUTPUT_DIR"/data "$SDK_PATH"/apps/video_sei_enc
+  fi
   cd "$BUILD_PATH" || return
   make data
 )}

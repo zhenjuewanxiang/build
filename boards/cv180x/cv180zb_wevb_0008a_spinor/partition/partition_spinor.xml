@@ -1,13 +1,16 @@
 <physical_partition type="spinor">
-    <partition label="fip" size_in_kb="1024" readonly="false" file="fip_spl.bin"/>
-    <partition label="2nd" size_in_kb="3072" readonly="false" file="yoc.bin"/>
-    <partition label="BOOT" size_in_kb="3968" readonly="false" file="boot.spinor"/>
-    <partition label="LOGO" size_in_kb="128" readonly="false" file=""/>
+    <!-- 16MB NOR A/B OTA layout. Image size targets: fip<=640KB, 2nd<=2560KB, boot<=3072KB, rootfs<=2304KB, data<=2048KB. -->
+    <partition label="fip" size_in_kb="640" readonly="false" file="fip_spl.bin"/>
+    <partition label="2nd" size_in_kb="2560" readonly="false" file="yoc.bin"/>
+    <partition label="BOOT" size_in_kb="3072" readonly="false" file="boot.spinor"/>
+    <partition label="BOOT_BAK" size_in_kb="3072" readonly="false" file="boot_v420.spinor"/>
+    <partition label="ROOTFS" size_in_kb="2304" readonly="false" file="rootfs.spinor" />
+    <partition label="ROOTFS_BAK" size_in_kb="2304" readonly="false" file="rootfs_v420.spinor" />
+    <partition label="OTA_META" size_in_kb="64" readonly="false" file="" />
     <partition label="PARAM" size_in_kb="64" file="" />
     <partition label="PARAM_BAK" size_in_kb="64" file="" />
     <partition label="ENV" size_in_kb="64" file="" />
     <partition label="ENV_BAK" size_in_kb="64" file="" />
-    <!-- 16MB NOR: ROOTFS 4MB 可放下含 8189fs.ko 的 squashfs(~4MB) -->
-    <partition label="ROOTFS" size_in_kb="4096" readonly="false" file="rootfs.spinor" />
-    <partition label="DATA"  size_in_kb="3840" readonly="false" file="data.spinor" mountpoint="/mnt/data" type="jffs2" />
+    <partition label="DATA" size_in_kb="2048" readonly="false" file="data.spinor" mountpoint="/mnt/data" type="jffs2" />
+    <partition label="MISC" size_in_kb="64" readonly="false" file="" />
 </physical_partition>
