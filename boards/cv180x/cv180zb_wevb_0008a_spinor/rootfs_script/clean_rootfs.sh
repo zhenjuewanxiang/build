@@ -2,6 +2,22 @@
 set -e
 
 SYSTEM_DIR=$1
+BOARD_DIR=$(cd "$(dirname "$0")/.." && pwd)
+FW_CONFIG="$BOARD_DIR/firmware_version.conf"
+
+FW_VERSION=1.0.0
+FW_BOARD=cv180zb_wevb_0008a_spinor
+FW_PRODUCT=v420
+if [ -f "$FW_CONFIG" ]; then
+	. "$FW_CONFIG"
+fi
+
+mkdir -p "$SYSTEM_DIR/etc"
+cat > "$SYSTEM_DIR/etc/firmware_version" <<EOF
+FW_VERSION=$FW_VERSION
+FW_BOARD=$FW_BOARD
+FW_PRODUCT=$FW_PRODUCT
+EOF
 
 # Keep the minimal base system needed for UVC/video + OTA. This board targets
 # a 16MB spinor A/B layout, so rootfs must stay below the ROOTFS slot size.
@@ -44,6 +60,8 @@ rm -f "$SYSTEM_DIR/lib/libgomp.so"* "$SYSTEM_DIR/lib/libatomic.so"*
 
 # Make sure OTA helpers are executable when supplied by overlay/packages.
 chmod +x "$SYSTEM_DIR/usr/sbin/ota_update.sh" "$SYSTEM_DIR/usr/sbin/ota_mark_good.sh" 2>/dev/null || true
-chmod +x "$SYSTEM_DIR/etc/init.d/S98ota_mark_good" 2>/dev/null || true
+chmod +x "$SYSTEM_DIR/usr/sbin/ota_meta.sh" "$SYSTEM_DIR/usr/bin/fw_version" 2>/dev/null || true
+chmod +x "$SYSTEM_DIR/usr/sbin/sd_hotplug.sh" "$SYSTEM_DIR/usr/sbin/ota_sd_autoupdate.sh" 2>/dev/null || true
+chmod +x "$SYSTEM_DIR/etc/init.d/S12sd_hotplug" "$SYSTEM_DIR/etc/init.d/S98ota_mark_good" 2>/dev/null || true
 
 du -sh "$SYSTEM_DIR"/* | sort -rh

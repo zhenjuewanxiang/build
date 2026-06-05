@@ -293,6 +293,39 @@ fi
   command rm -rf "$TMPDIR"
 )}
 
+function pack_spinor_ab_ota
+{(
+  if [[ "$STORAGE_TYPE" != "spinor" ]] || [[ "$DOUBLESDK" != "y" ]]; then
+    return 0
+  fi
+
+  local fw_config="$BUILD_PATH/boards/${CHIP_ARCH,,}/$PROJECT_FULLNAME/firmware_version.conf"
+  local fw_version="unknown"
+  if [[ -f "$fw_config" ]]; then
+    # shellcheck disable=SC1090
+    source "$fw_config"
+    fw_version="${FW_VERSION:-unknown}"
+  fi
+
+  local boot_img="$OUTPUT_DIR/rawimages/boot.$STORAGE_TYPE"
+  local rootfs_img="$OUTPUT_DIR/rawimages/rootfs.$STORAGE_TYPE"
+  local ota_base="${TOP_DIR:-$SDK_PATH}/tmp"
+  local ota_dir="$ota_base/ota-$fw_version"
+
+  if [[ ! -f "$boot_img" ]] || [[ ! -f "$rootfs_img" ]]; then
+    print_error "Skip spinor A/B OTA package: missing boot/rootfs raw image"
+    return 1
+  fi
+
+  print_notice "Generate spinor A/B OTA package: $ota_dir"
+  rm -rf "$ota_dir"
+  "$TOOLS_PATH/common/ota_tool/make_spinor_ab_ota.sh" \
+    "$ota_dir" \
+    "$PROJECT_FULLNAME" \
+    "$boot_img" \
+    "$rootfs_img"
+)}
+
 function pack_prog_img
 {(
   local tmp_dir

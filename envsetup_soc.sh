@@ -734,6 +734,7 @@ function build_all()
   pack_system || return $?
   copy_tools || return $?
   pack_upgrade || return $?
+  pack_spinor_ab_ota || return $?
 )}
 
 function clean_all()

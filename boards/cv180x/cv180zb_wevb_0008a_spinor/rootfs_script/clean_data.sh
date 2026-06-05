@@ -28,7 +28,6 @@ done
 # Ensure startup uses only DATA app/libs plus base rootfs libs.
 cat > "$DATA_DIR/auto.sh" <<'EOF'
 #!/bin/sh
-mount /dev/mmcblk0p1 /mnt/sd 2>/dev/null || true
 export LD_LIBRARY_PATH="/lib:/usr/lib:/mnt/data/lib"
 /etc/run_usb.sh probe uvc
 [ -x /mnt/data/ConfigUVC.sh ] && /mnt/data/ConfigUVC.sh
