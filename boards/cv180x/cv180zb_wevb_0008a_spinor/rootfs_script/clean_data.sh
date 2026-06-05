@@ -12,6 +12,9 @@ find "$DATA_DIR" -mindepth 1 -maxdepth 1 ! -name bin ! -name lib ! -name auto.sh
 
 if [ -n "$APP_SRC" ] && [ -x "$APP_SRC/video_sei_enc" ]; then
 	cp -f "$APP_SRC/video_sei_enc" "$DATA_DIR/bin/video_sei_enc"
+else
+	echo "missing rebuilt video_sei_enc: $APP_SRC/video_sei_enc" >&2
+	exit 1
 fi
 
 # Remove libraries not needed by video_sei_enc.

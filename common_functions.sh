@@ -154,7 +154,13 @@ function pack_data
   mkdir -p "$OUTPUT_DIR"/data
   pushd "$OUTPUT_DIR"/data;echo "If you can dream it, you can do it." > sample;popd
   if [ -x "$BUILD_PATH"/boards/"${CHIP_ARCH,,}"/"$PROJECT_FULLNAME"/rootfs_script/clean_data.sh ]; then
-    "$BUILD_PATH"/boards/"${CHIP_ARCH,,}"/"$PROJECT_FULLNAME"/rootfs_script/clean_data.sh "$OUTPUT_DIR"/data "$SDK_PATH"/apps/video_sei_enc
+    sdk_top="${TOP_DIR:-$SDK_PATH}"
+    app_dir="$sdk_top/apps/video_sei_enc"
+    if [ -d "$app_dir" ]; then
+      make -C "$app_dir" clean || return "$?"
+      make -C "$app_dir" || return "$?"
+    fi
+    "$BUILD_PATH"/boards/"${CHIP_ARCH,,}"/"$PROJECT_FULLNAME"/rootfs_script/clean_data.sh "$OUTPUT_DIR"/data "$app_dir" || return "$?"
   fi
   cd "$BUILD_PATH" || return
   make data
