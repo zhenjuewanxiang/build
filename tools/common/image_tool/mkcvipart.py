@@ -254,6 +254,13 @@ def gen_cvipart_h(output, parser):
             of.write(
                 "#define RTOS_SIZE 0x%X\n" % (parser.parts["RTOS"]["part_size"])
             )
+            if not sec_exist:
+                of.write(
+                    "#define SECEND_OFFSET 0x%X\n" % (parser.parts["RTOS"]["offset"])
+                )
+                of.write(
+                    "#define SECEND_SIZE 0x%X\n" % (parser.parts["RTOS"]["part_size"])
+                )
         # Generintg PART_ENV
         if parser.getStorage() == "emmc":
             LBA_SIZE = 512

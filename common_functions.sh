@@ -153,6 +153,9 @@ function pack_data
   export CHIP_FOLDER_PATH SDK_VER_FOLDER_PATH CUST_FOLDER_PATH
   mkdir -p "$OUTPUT_DIR"/data
   pushd "$OUTPUT_DIR"/data;echo "If you can dream it, you can do it." > sample;popd
+  if [ -x "$BUILD_PATH"/boards/"${CHIP_ARCH,,}"/"$PROJECT_FULLNAME"/rootfs_script/clean_data.sh ]; then
+    "$BUILD_PATH"/boards/"${CHIP_ARCH,,}"/"$PROJECT_FULLNAME"/rootfs_script/clean_data.sh "$OUTPUT_DIR"/data "$SDK_PATH"/apps/video_sei_enc
+  fi
   cd "$BUILD_PATH" || return
   make data
 )}
@@ -243,6 +246,7 @@ function copy_tools
     if [ "$ENABLE_BOOTLOGO" -eq 1 ] && [ "$SUP_LARGE_PART_SIZE" = "y" ]; then
       python3 "$IMGTOOL_PATH"/raw2cimg_lps.py "$BOOTLOGO_PATH" "$OUTPUT_DIR" "$FLASH_PARTITION_XML"
     fi
+    command rm -f "$OUTPUT_DIR"/partition*.xml
     command cp --remove-destination "$FLASH_PARTITION_XML" "$OUTPUT_DIR"/
   fi
 )}
@@ -287,6 +291,39 @@ else
   python3 "$IMGTOOL_PATH"/mk_package.py "$FLASH_PARTITION_XML" "$OUTPUT_DIR" -o "$OUTPUT_DIR"/upgrade.zip $extra_files_args
 fi
   command rm -rf "$TMPDIR"
+)}
+
+function pack_spinor_ab_ota
+{(
+  if [[ "$STORAGE_TYPE" != "spinor" ]] || [[ "$DOUBLESDK" != "y" ]]; then
+    return 0
+  fi
+
+  local fw_config="$BUILD_PATH/boards/${CHIP_ARCH,,}/$PROJECT_FULLNAME/firmware_version.conf"
+  local fw_version="unknown"
+  if [[ -f "$fw_config" ]]; then
+    # shellcheck disable=SC1090
+    source "$fw_config"
+    fw_version="${FW_VERSION:-unknown}"
+  fi
+
+  local boot_img="$OUTPUT_DIR/rawimages/boot.$STORAGE_TYPE"
+  local rootfs_img="$OUTPUT_DIR/rawimages/rootfs.$STORAGE_TYPE"
+  local ota_base="${TOP_DIR:-$SDK_PATH}/tmp"
+  local ota_dir="$ota_base/ota-$fw_version"
+
+  if [[ ! -f "$boot_img" ]] || [[ ! -f "$rootfs_img" ]]; then
+    print_error "Skip spinor A/B OTA package: missing boot/rootfs raw image"
+    return 1
+  fi
+
+  print_notice "Generate spinor A/B OTA package: $ota_dir"
+  rm -rf "$ota_dir"
+  "$TOOLS_PATH/common/ota_tool/make_spinor_ab_ota.sh" \
+    "$ota_dir" \
+    "$PROJECT_FULLNAME" \
+    "$boot_img" \
+    "$rootfs_img"
 )}
 
 function pack_prog_img

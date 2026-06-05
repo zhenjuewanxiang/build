@@ -52,6 +52,7 @@ function _build_fsbl_env()
 function build_fsbl()
 {(
   print_notice "Run ${FUNCNAME[0]}() function"
+  _build_fsbl_env
   _build_uboot_env
   _build_opensbi_env
   cd "$BUILD_PATH" || return
@@ -733,6 +734,7 @@ function build_all()
   pack_system || return $?
   copy_tools || return $?
   pack_upgrade || return $?
+  pack_spinor_ab_ota || return $?
 )}
 
 function clean_all()
@@ -1008,7 +1010,7 @@ function cvi_setup_env()
   fi
 
   # config yoc.bin packed in fip.bin or not
-  if [ `grep -c "partition label=\"2nd\"" $FLASH_PARTITION_XML` -ne '0' ]; then
+  if [ `grep -c "file=\"yoc.bin\"" $FLASH_PARTITION_XML` -ne '0' ]; then
     export C906L_PARTITION_EXIST=1
   else
     export C906L_PARTITION_EXIST=0

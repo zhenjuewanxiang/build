@@ -57,6 +57,11 @@ endif
 fsbl-build: u-boot-build memory-map ${BL2_CVIPART_DEP}
 	$(call print_target)
 	${Q}ln -snrf -t ${FSBL_PATH}/build ${CVI_BOARD_MEMMAP_H_PATH}
+ifeq (${CONFIG_DOUBLESDK},y)
+	${Q}cp -f ${BLCP_2ND_PATH} ${FSBL_PATH}/cvirtos.bin
+	${Q}cp -f ${OPENSBI_PATH}/build/platform/generic/firmware/fw_dynamic.bin ${FSBL_PATH}/fw_dynamic.bin
+	${Q}cp -f ${UBOOT_PATH}/${UBOOT_OUTPUT_FOLDER}/u-boot-raw.bin ${FSBL_PATH}/u-boot-raw.bin
+endif
 	${Q}$(MAKE) -C ${FSBL_PATH} clean O=${FSBL_OUTPUT_PATH} 
 	${Q}$(MAKE) -j${NPROC} -C ${FSBL_PATH} O=${FSBL_OUTPUT_PATH} LOG_LEVEL=${LOG_LEVEL} BLCP_2ND_PATH=${BLCP_2ND_PATH} \
 		CONFIG_SKIP_UBOOT=n LOADER_2ND_PATH=${UBOOT_PATH}/${UBOOT_OUTPUT_FOLDER}/u-boot-raw.bin \
@@ -64,8 +69,7 @@ fsbl-build: u-boot-build memory-map ${BL2_CVIPART_DEP}
 		FORCE_BOOT_FROM_FLASH=y
 	${Q}cp ${FSBL_OUTPUT_PATH}/fip.bin ${OUTPUT_DIR}
 ifeq (${CONFIG_DOUBLESDK},y)
-	${Q}cp ${FSBL_PATH}/cvirtos.bin $(OUTPUT_DIR)/rawimages/cvirtos.bin
-	${Q}$(call raw2cimg ,cvirtos.bin)
+	${Q}cp -f ${BLCP_2ND_PATH} $(OUTPUT_DIR)/rawimages/yoc.bin
 endif
 ifeq (${CONFIG_UBOOT_SPL_CUSTOM},y)
 	${Q}$(MAKE) -C ${FSBL_PATH} clean O=${FSBL_OUTPUT_PATH} 
