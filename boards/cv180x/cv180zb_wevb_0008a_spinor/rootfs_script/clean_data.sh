@@ -18,7 +18,7 @@ else
 fi
 
 # Remove libraries not needed by video_sei_enc.
-KEEP_LIBS=" libmsg.so libcvilink.so libsys.so libvi.so libvpss.so libvo.so librgn.so libgdc.so libvenc.so libcvi_bin.so libcvi_bin_isp.so libisp.so libae.so libaf.so libawb.so libini.so libmisc.so "
+KEEP_LIBS=" libmsg.so libcvilink.so libsys.so libvi.so libvpss.so libvo.so librgn.so libgdc.so libvenc.so libcvi_bin.so libcvi_bin_isp.so libisp.so libae.so libaf.so libawb.so libini.so libmisc.so libcvi_audio.so libcvi_vqe.so libcvi_VoiceEngine.so libsbc.so libcvi_RES1.so libtinyalsa.so libcvi_ssp.so libcvitracer.so libsns_full.so libisp_algo.so "
 for lib in "$DATA_DIR"/lib/*; do
 	[ -e "$lib" ] || continue
 	base=$(basename "$lib")
@@ -34,6 +34,14 @@ cat > "$DATA_DIR/auto.sh" <<'EOF'
 export LD_LIBRARY_PATH="/lib:/usr/lib:/mnt/data/lib"
 /etc/run_usb.sh probe uvc
 [ -x /mnt/data/ConfigUVC.sh ] && /mnt/data/ConfigUVC.sh
+/etc/run_usb.sh probe uac1
+UAC_FUNC=$(find /tmp/usb/usb_gadget/cvitek/functions -maxdepth 1 -name "uac1.*" | head -n 1)
+if [ -n "$UAC_FUNC" ]; then
+    echo 0 > "$UAC_FUNC/c_chmask" 2>/dev/null || true
+    echo 3 > "$UAC_FUNC/p_chmask" 2>/dev/null || true
+    echo 48000 > "$UAC_FUNC/p_srate" 2>/dev/null || true
+    echo 2 > "$UAC_FUNC/p_ssize" 2>/dev/null || true
+fi
 /etc/run_usb.sh start
 echo device > /proc/cviusb/otg_role 2>/dev/null || true
 if [ -x /mnt/data/bin/video_sei_enc ]; then

@@ -100,6 +100,7 @@ function pack_boot
     if [ "$SUP_LARGE_PART_SIZE" = "n" ];then
       if [ "$DOUBLESDK" = "y" ];then
         command cp "$OUTPUT_DIR"/rawimages/boot."$STORAGE_TYPE" "$OUTPUT_DIR"/rawimages/boot_v420."$STORAGE_TYPE"
+        python3 "$IMGTOOL_PATH"/raw2cimg.py "$OUTPUT_DIR"/rawimages/boot."$STORAGE_TYPE" "$OUTPUT_DIR" "$FLASH_PARTITION_XML"
         python3 "$IMGTOOL_PATH"/raw2cimg.py "$OUTPUT_DIR"/rawimages/boot_v420."$STORAGE_TYPE" "$OUTPUT_DIR" "$FLASH_PARTITION_XML"
       else
         python3 "$IMGTOOL_PATH"/raw2cimg.py "$OUTPUT_DIR"/rawimages/boot."$STORAGE_TYPE" "$OUTPUT_DIR" "$FLASH_PARTITION_XML"
