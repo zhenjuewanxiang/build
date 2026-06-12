@@ -69,8 +69,8 @@ def main():
 
         # Since emmc will not define fip in partition.xml add them
         # manually.
-        if storage == "emmc":
-            fip_path = path.join(args.input, "fip.bin")
+        if storage in ("emmc", "spinor"):
+            fip_path = path.join(args.input, "fip_spl.bin" if storage == "spinor" else "fip.bin")
             if path.isfile(fip_path):
                 zipObj.write(fip_path, "fip.bin")
 
