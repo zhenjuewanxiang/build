@@ -31,6 +31,17 @@ done
 # Ensure startup uses only DATA app/libs plus base rootfs libs.
 cat > "$DATA_DIR/auto.sh" <<'EOF'
 #!/bin/sh
+GPIO_XGPIOC8=424
+if command -v devmem >/dev/null 2>&1; then
+    devmem 0x030010ec 32 0x3 >/dev/null 2>&1 || true
+fi
+if [ ! -d /sys/class/gpio/gpio${GPIO_XGPIOC8} ]; then
+    echo ${GPIO_XGPIOC8} > /sys/class/gpio/export 2>/dev/null || true
+fi
+if [ -d /sys/class/gpio/gpio${GPIO_XGPIOC8} ]; then
+    echo high > /sys/class/gpio/gpio${GPIO_XGPIOC8}/direction 2>/dev/null || true
+    echo 1 > /sys/class/gpio/gpio${GPIO_XGPIOC8}/value 2>/dev/null || true
+fi
 export LD_LIBRARY_PATH="/lib:/usr/lib:/mnt/data/lib"
 /etc/run_usb.sh probe uvc
 [ -x /mnt/data/ConfigUVC.sh ] && /mnt/data/ConfigUVC.sh
